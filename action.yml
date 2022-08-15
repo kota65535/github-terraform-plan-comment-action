@@ -1,0 +1,32 @@
+name: "Terraform Plan Notification for PR"
+description: "Add Terraform plan result as PR comment"
+branding:
+  icon: "cloud"
+  color: "purple"
+inputs:
+  plan-job-name:
+    description: "Plan job name"
+    required: true
+  plan-step-name:
+    description: "Name of the job step that executed Terraform Plan"
+    required: true
+  workspace:
+    description: "Workspace name"
+    required: false
+  github-token:
+    description: "GitHub token"
+    required: false
+outputs:
+  outside:
+    description: "Changes outside section"
+  action:
+    description: "Resource actions section"
+  output:
+    description: "Output section"
+  warning:
+    description: "Warning section"
+  summary:
+    description: "Summary section"
+runs:
+  using: "node16"
+  main: "dist/index.js"
