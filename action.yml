@@ -27,6 +27,8 @@ outputs:
     description: "Warning section"
   summary:
     description: "Summary section"
+  should-apply:
+    description: "Should apply or not"
 runs:
   using: "node16"
   main: "dist/index.js"
