@@ -14,6 +14,8 @@ inputs:
     description: "Terraform workspace name"
   github-token:
     description: "GitHub token"
+  default-github-token:
+    description: "Default gitHub token"
     default: ${{ github.token }}
 outputs:
   outside:

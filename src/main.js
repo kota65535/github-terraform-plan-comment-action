@@ -9,7 +9,13 @@ const main = async () => {
   const jobName = core.getInput("plan-job").trim();
   const stepName = core.getInput("plan-step").trim();
   const workspace = core.getInput("workspace").trim();
-  const githubToken = core.getInput("github-token").trim();
+  let githubToken = core.getInput("github-token").trim();
+  const defaultGithubToken = core.getInput("default-github-token").trim();
+
+  githubToken = githubToken || process.env.GITHUB_TOKEN || defaultGithubToken;
+  if (!githubToken) {
+    throw new Error("No GitHub token provided");
+  }
 
   initOctokit(githubToken);
 
