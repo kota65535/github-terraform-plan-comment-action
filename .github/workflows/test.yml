@@ -50,7 +50,7 @@ jobs:
       - plan
     steps:
       - name: Notify terraform plan result as PR comment
-        uses: kota65535/github-terraform-plan-comment-action@{{ github.sha }}
+        uses: kota65535/github-terraform-plan-comment-action@${{ github.sha }}
         id: plan-result
         with:
           plan-job-name: plan
