@@ -13,7 +13,7 @@ const main = async () => {
 
   // github token can be also given via env
   githubToken = githubToken || process.env.GITHUB_TOKEN;
-  if (githubToken === "") {
+  if (!githubToken) {
     throw new Error("Need to provide one of github-token or GITHUB_TOKEN environment variable");
   }
 
