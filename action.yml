@@ -12,10 +12,9 @@ inputs:
     required: true
   workspace:
     description: "Workspace name"
-    required: false
   github-token:
     description: "GitHub token"
-    required: false
+    default: ${{ github.token }}
 outputs:
   outside:
     description: "Changes outside section"
