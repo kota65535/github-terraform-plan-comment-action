@@ -23055,7 +23055,7 @@ const main = async () => {
   let githubToken = core.getInput("github-token").trim();
 
   // github token can be also given via env
-  githubToken = githubToken || process.env.GITHUB_TOKEN;
+  githubToken = githubToken || context.token;
   if (!githubToken) {
     throw new Error("Need to provide one of github-token or GITHUB_TOKEN environment variable");
   }
