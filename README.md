@@ -13,7 +13,7 @@ GitHub Action for putting terraform plan result as a PR comment.
 |------------------|-----------------------------------------------|----------|----------------------------------------------------|
 | `plan-job-name`  | Job name where `terraform plan` has been run  | Yes      | N/A                                                |
 | `plan-step-name` | Step name where `terraform plan` has been run | Yes      | N/A                                                |
-| `workspace`      | Terraform workspace name                      | No       | Empty string                                       |
+| `workspace`      | Terraform workspace name                      | No       | N/A                                                |
 | `github-token`   | GitHub token                                  | No       | `${{ env.GITHUB_TOKEN }}` or `${{ github.token }}` | 
 
 ## Usage
@@ -26,7 +26,7 @@ Use this action after the job where you run `terraform plan`.
     runs-on: ubuntu-latest
     steps:
       # ... other steps
-      
+
       - name: Run terraform plan
         run: terraform plan
 
@@ -41,5 +41,5 @@ Use this action after the job where you run `terraform plan`.
         uses: kota65535/github-terraform-plan-comment-action
         with:
           plan-job: plan
-          plan-step: Run terraform plan for dev
+          plan-step: Run terraform plan
 ```
