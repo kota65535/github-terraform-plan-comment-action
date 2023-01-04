@@ -1,0 +1,49 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - README.md
+  pull_request:
+
+
+jobs:
+  plan:
+    runs-on: aip-dev
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./.github/workflows
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup tools
+        uses: ./.github/actions/setup-tools
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Run terraform init
+        run: terraform init
+        working-directory: terraform
+      - name: Run terraform plan
+        run: terraform plan -out tfplan
+        working-directory: terraform
+      - name: Upload plan file
+        uses: actions/upload-artifact@v3
+        with:
+          name: Terraform plan file
+          path: tfplan
+  
+  after-plan:
+    timeout-minutes: 5
+    needs:
+      - plan
+    steps:
+      - name: Notify terraform plan result as PR comment
+        uses: kota65535/github-terraform-plan-comment-action@main
+        id: plan-result
+        with:
+          plan-job-name: plan
+          plan-step-name: Run terraform plan
