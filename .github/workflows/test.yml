@@ -11,7 +11,7 @@ on:
 
 jobs:
   plan:
-    runs-on: aip-dev
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
@@ -37,6 +37,7 @@ jobs:
           path: tfplan
   
   after-plan:
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     needs:
       - plan
