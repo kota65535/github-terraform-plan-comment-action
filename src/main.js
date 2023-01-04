@@ -9,7 +9,7 @@ const main = async () => {
   const jobName = core.getInput("plan-job-name").trim();
   const stepName = core.getInput("plan-step-name").trim();
   const workspace = core.getInput("workspace").trim();
-  const githubToken = core.getInput("github").trim();
+  const githubToken = core.getInput("github-token").trim();
 
   initOctokit(githubToken);
 
