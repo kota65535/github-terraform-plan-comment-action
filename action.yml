@@ -5,15 +5,17 @@ branding:
   color: "purple"
 inputs:
   plan-job-name:
-    description: "Plan job name"
+    description: "Job name where `terraform plan` has been run"
     required: true
   plan-step-name:
-    description: "Name of the job step that executed Terraform Plan"
+    description: "Step name where `terraform plan` has been run"
     required: true
   workspace:
-    description: "Workspace name"
+    description: "Terraform workspace name"
   github-token:
     description: "GitHub token"
+  default-github-token:
+    description: "Default gitHub token"
     default: ${{ github.token }}
 outputs:
   outside:
