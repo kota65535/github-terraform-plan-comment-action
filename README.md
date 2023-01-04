@@ -9,12 +9,12 @@ GitHub Action for putting terraform plan result as a PR comment.
 
 ## Inputs
 
-| Name             | Description                                   | Required | Default                                            |
-|------------------|-----------------------------------------------|----------|----------------------------------------------------|
-| `plan-job-name`  | Job name where `terraform plan` has been run  | Yes      | N/A                                                |
-| `plan-step-name` | Step name where `terraform plan` has been run | Yes      | N/A                                                |
-| `workspace`      | Terraform workspace name                      | No       | N/A                                                |
-| `github-token`   | GitHub token                                  | No       | `${{ env.GITHUB_TOKEN }}` or `${{ github.token }}` | 
+| Name             | Description                                   | Required | Default                                                 |
+|------------------|-----------------------------------------------|----------|---------------------------------------------------------|
+| `plan-job-name`  | Job name where `terraform plan` has been run  | Yes      | N/A                                                     |
+| `plan-step-name` | Step name where `terraform plan` has been run | Yes      | N/A                                                     |
+| `workspace`      | Terraform workspace name                      | No       | N/A                                                     |
+| `github-token`   | GitHub token                                  | No       | `${{ env.GITHUB_TOKEN }}` or<br/> `${{ github.token }}` | 
 
 ## Usage
 
