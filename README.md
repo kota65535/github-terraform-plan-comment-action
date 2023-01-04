@@ -9,12 +9,12 @@ GitHub Action for putting terraform plan result as a PR comment.
 
 ## Inputs
 
-| Name           | Description                                   | Required | Default                                            |
-|----------------|-----------------------------------------------|----------|----------------------------------------------------|
-| `plan-job`     | Job name where `terraform plan` has been run  | Yes      | N/A                                                |
-| `plan-step`    | Step name where `terraform plan` has been run | Yes      | N/A                                                |
-| `workspace`    | Terraform workspace name                      | No       | Empty string                                       |
-| `github-token` | GitHub token                                  | No       | `${{ env.GITHUB_TOKEN }}` or `${{ github.token }}` | 
+| Name           | Description                                   | Required | Default                                                 |
+|----------------|-----------------------------------------------|----------|---------------------------------------------------------|
+| `plan-job`     | Job name where `terraform plan` has been run  | Yes      | N/A                                                     |
+| `plan-step`    | Step name where `terraform plan` has been run | Yes      | N/A                                                     |
+| `workspace`    | Terraform workspace name                      | No       | N/A                                                     |
+| `github-token` | GitHub token                                  | No       | `${{ env.GITHUB_TOKEN }}` or<br/> `${{ github.token }}` | 
 
 ## Usage
 
@@ -41,5 +41,5 @@ Use this action after the job where you run `terraform plan`.
         uses: kota65535/github-terraform-plan-comment-action
         with:
           plan-job: plan
-          plan-step: Run terraform plan for dev
+          plan-step: Run terraform plan
 ```
