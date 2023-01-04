@@ -50,7 +50,7 @@ jobs:
       - plan
     steps:
       - name: Notify terraform plan result as PR comment
-        uses: .
+        uses: ./
         id: plan-result
         with:
           plan-job-name: plan
