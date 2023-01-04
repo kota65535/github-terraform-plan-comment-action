@@ -23052,13 +23052,7 @@ const main = async () => {
   const jobName = core.getInput("plan-job-name").trim();
   const stepName = core.getInput("plan-step-name").trim();
   const workspace = core.getInput("workspace").trim();
-  let githubToken = core.getInput("github-token").trim();
-
-  // github token can be also given via env
-  githubToken = githubToken || context.token;
-  if (!githubToken) {
-    throw new Error("Need to provide one of github-token or GITHUB_TOKEN environment variable");
-  }
+  const githubToken = core.getInput("github-token").trim();
 
   initOctokit(githubToken);
 
