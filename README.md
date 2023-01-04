@@ -1,6 +1,9 @@
 # github-terraform-plan-comment-action
 
 GitHub Action for putting terraform plan result as a PR comment.
+- Shows summary of the affected resources
+- [Click here](https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/3836204681/jobs/6530118090#step:8:56)
+  link to easily jump to the full plan log
 
 ![img.png](img.png)
 
