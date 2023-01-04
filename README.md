@@ -40,6 +40,6 @@ Use this action after the job where you run `terraform plan`.
       - name: Notify terraform plan result as PR comment
         uses: kota65535/github-terraform-plan-comment-action
         with:
-          plan-job: plan
-          plan-step: Run terraform plan
+          plan-job-name: plan
+          plan-step-name: Run terraform plan
 ```
