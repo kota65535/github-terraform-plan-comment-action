@@ -41,7 +41,9 @@ jobs:
       - name: Select prod workspace
         run: terraform workspace select prod
       - name: Run terraform plan for prod
-        run: terraform plan -out tfplan-prod
+        run: |
+          terraform taint aws_dynamodb_table.test
+          terraform plan -out tfplan-prod
       - name: Upload plan file
         uses: actions/upload-artifact@v3
         with:
