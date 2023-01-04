@@ -17,8 +17,8 @@ provider "aws" {
   region = "ap-northeast-1"
 }
 
-resource "aws_dynamodb_table" "example" {
-  name         = "github-action-test"
+resource "aws_dynamodb_table" "test" {
+  name         = "github-action-test-${terraform.workspace}"
   hash_key     = "ID"
   billing_mode = "PAY_PER_REQUEST"
 
