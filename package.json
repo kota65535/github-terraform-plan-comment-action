@@ -32,18 +32,11 @@
     "eslint-config-prettier": "8.6.0",
     "eslint-config-standard": "15.0.1",
     "husky": "7.0.4",
-    "lint-staged": "12.3.7",
     "prettier": "2.6.2"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && npm run build && git add dist/index.js"
+      "pre-commit": "npm run build && git add dist/index.js"
     }
-  },
-  "lint-staged": {
-    "src/**/*.js": [
-      "npm run lint",
-      "npm run format"
-    ]
   }
 }
