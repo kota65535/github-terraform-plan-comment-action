@@ -14,7 +14,6 @@ const main = async () => {
   let githubToken = core.getInput("github-token").trim();
   const defaultGithubToken = core.getInput("default-github-token").trim();
 
-  // TODO: delete this
   jobName = jobName || jobNameDeprecated;
   stepName = stepName || stepNameDeprecated;
 
