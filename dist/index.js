@@ -15869,16 +15869,11 @@ const { getStepLogs, getPlanStepUrl, initOctokit, createPrComment } = __nccwpck_
 const { createComment } = __nccwpck_require__(7876);
 
 const main = async () => {
-  let jobName = core.getInput("plan-job").trim();
-  let stepName = core.getInput("plan-step").trim();
-  const jobNameDeprecated = core.getInput("plan-job-name").trim();
-  const stepNameDeprecated = core.getInput("plan-step-name").trim();
-  const workspace = core.getInput("workspace").trim();
-  let githubToken = core.getInput("github-token").trim();
-  const defaultGithubToken = core.getInput("default-github-token").trim();
-
-  jobName = jobName || jobNameDeprecated;
-  stepName = stepName || stepNameDeprecated;
+  const jobName = core.getInput("plan-job", { required: true });
+  const stepName = core.getInput("plan-step", { required: true });
+  const workspace = core.getInput("workspace");
+  let githubToken = core.getInput("github-token");
+  const defaultGithubToken = core.getInput("default-github-token");
 
   githubToken = githubToken || process.env.GITHUB_TOKEN || defaultGithubToken;
   if (!githubToken) {
