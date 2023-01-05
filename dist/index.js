@@ -23049,11 +23049,16 @@ const { getStepLogs, getPlanStepUrl, initOctokit, createPrComment } = __webpack_
 const { createComment } = __webpack_require__(7876);
 
 const main = async () => {
-  const jobName = core.getInput("plan-job-name").trim();
-  const stepName = core.getInput("plan-step-name").trim();
+  let jobName = core.getInput("plan-job").trim();
+  let stepName = core.getInput("plan-step").trim();
+  const jobNameDeprecated = core.getInput("plan-job-name").trim();
+  const stepNameDeprecated = core.getInput("plan-step-name").trim();
   const workspace = core.getInput("workspace").trim();
   let githubToken = core.getInput("github-token").trim();
   const defaultGithubToken = core.getInput("default-github-token").trim();
+
+  jobName = jobName || jobNameDeprecated;
+  stepName = stepName || stepNameDeprecated;
 
   githubToken = githubToken || process.env.GITHUB_TOKEN || defaultGithubToken;
   if (!githubToken) {

@@ -9,12 +9,12 @@ GitHub Action for putting terraform plan result as a PR comment.
 
 ## Inputs
 
-| Name             | Description                                   | Required | Default                                                 |
-|------------------|-----------------------------------------------|----------|---------------------------------------------------------|
-| `plan-job-name`  | Job name where `terraform plan` has been run  | Yes      | N/A                                                     |
-| `plan-step-name` | Step name where `terraform plan` has been run | Yes      | N/A                                                     |
-| `workspace`      | Terraform workspace name                      | No       | N/A                                                     |
-| `github-token`   | GitHub token                                  | No       | `${{ env.GITHUB_TOKEN }}` or<br/> `${{ github.token }}` | 
+| Name           | Description                                   | Required | Default                                                 |
+|----------------|-----------------------------------------------|----------|---------------------------------------------------------|
+| `plan-job`     | Job name where `terraform plan` has been run  | Yes      | N/A                                                     |
+| `plan-step`    | Step name where `terraform plan` has been run | Yes      | N/A                                                     |
+| `workspace`    | Terraform workspace name                      | No       | N/A                                                     |
+| `github-token` | GitHub token                                  | No       | `${{ env.GITHUB_TOKEN }}` or<br/> `${{ github.token }}` | 
 
 ## Usage
 
@@ -26,7 +26,7 @@ Use this action after the job where you run `terraform plan`.
     runs-on: ubuntu-latest
     steps:
       # ... other steps
-
+      
       - name: Run terraform plan
         run: terraform plan
 
@@ -40,6 +40,6 @@ Use this action after the job where you run `terraform plan`.
       - name: Notify terraform plan result as PR comment
         uses: kota65535/github-terraform-plan-comment-action
         with:
-          plan-job-name: plan
-          plan-step-name: Run terraform plan
+          plan-job: plan
+          plan-step: Run terraform plan
 ```
