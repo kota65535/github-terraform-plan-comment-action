@@ -1,4 +1,3 @@
-const core = require("@actions/core");
 const { getOctokit } = require("@actions/github");
 const axios = require("axios");
 const { getMarkerText } = require("./github_comment");
@@ -110,7 +109,6 @@ const getStepLogs = async (jobName, stepName, context) => {
   }
   stepsLogs.push(lines);
 
-  core.info(JSON.stringify(stepsLogs));
   return stepsLogs[step.number - 1];
 };
 
@@ -132,7 +130,7 @@ const getAllComments = async (context) => {
       owner: context.repo.owner,
       repo: context.repo.repo,
       issue_number: context.issue.number,
-      page: page,
+      page,
       per_page: 100,
     });
     ret = ret.concat(res.data);
@@ -158,7 +156,7 @@ const createPrComment = async (body, env, context) => {
     owner: context.repo.owner,
     repo: context.repo.repo,
     issue_number: context.issue.number,
-    body: body,
+    body,
   });
 };
 

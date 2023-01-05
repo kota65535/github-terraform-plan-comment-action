@@ -15612,7 +15612,6 @@ function wrappy (fn, cb) {
 /***/ 8396:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const core = __nccwpck_require__(2186);
 const { getOctokit } = __nccwpck_require__(5438);
 const axios = __nccwpck_require__(6545);
 const { getMarkerText } = __nccwpck_require__(7876);
@@ -15724,7 +15723,6 @@ const getStepLogs = async (jobName, stepName, context) => {
   }
   stepsLogs.push(lines);
 
-  core.info(JSON.stringify(stepsLogs));
   return stepsLogs[step.number - 1];
 };
 
@@ -15746,7 +15744,7 @@ const getAllComments = async (context) => {
       owner: context.repo.owner,
       repo: context.repo.repo,
       issue_number: context.issue.number,
-      page: page,
+      page,
       per_page: 100,
     });
     ret = ret.concat(res.data);
@@ -15772,7 +15770,7 @@ const createPrComment = async (body, env, context) => {
     owner: context.repo.owner,
     repo: context.repo.repo,
     issue_number: context.issue.number,
-    body: body,
+    body,
   });
 };
 
@@ -15909,7 +15907,6 @@ module.exports = main;
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { findLinesBetween, findSections, anyMatch, findLine } = __nccwpck_require__(6254);
-const core = __nccwpck_require__(2186);
 
 const getOutsideChangeSection = (inputLines) => {
   const { offset, lines } = findLinesBetween(inputLines, /^Note: Objects have changed outside of Terraform$/, /^─+/);
@@ -16030,7 +16027,6 @@ const parse = (rawLines) => {
   for (const l of rawLines) {
     lines.push(l.replace(/\x1b\[[0-9;]*m/g, "")); // eslint-disable-line no-control-regex
   }
-  core.info(lines);
 
   const outside = getOutsideChangeSection(lines);
   const action = getResourceActionSection(lines);
