@@ -1,5 +1,5 @@
-name: "Terraform Plan Notification for PR"
-description: "Add Terraform plan result as PR comment"
+name: "Terraform Plan to PR Comment"
+description: "Notify Terraform plan result as a pull request comment"
 branding:
   icon: "cloud"
   color: "purple"
