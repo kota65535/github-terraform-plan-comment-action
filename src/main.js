@@ -1,7 +1,6 @@
 const core = require("@actions/core");
 const { context } = require("@actions/github");
 const parse = require("./parser");
-const { jsonString } = require("./util");
 const { getStepLogs, getPlanStepUrl, initOctokit, createPrComment } = require("./github");
 const { createComment } = require("./github_comment");
 
@@ -29,11 +28,11 @@ const main = async () => {
 
   await createPrComment(message, workspace, context);
 
-  core.setOutput("outside", jsonString(result.outside));
-  core.setOutput("action", jsonString(result.action));
-  core.setOutput("output", jsonString(result.output));
-  core.setOutput("warning", jsonString(result.warning));
-  core.setOutput("summary", jsonString(result.summary));
+  core.setOutput("outside", JSON.stringify(result.outside));
+  core.setOutput("action", JSON.stringify(result.action));
+  core.setOutput("output", JSON.stringify(result.output));
+  core.setOutput("warning", JSON.stringify(result.warning));
+  core.setOutput("summary", JSON.stringify(result.summary));
   core.setOutput("should-apply", result.shouldApply);
 };
 
