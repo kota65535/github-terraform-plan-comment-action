@@ -4344,6 +4344,24 @@ exports.request = request;
 
 /***/ }),
 
+/***/ 5063:
+/***/ ((module) => {
+
+"use strict";
+
+
+module.exports = ({onlyFirst = false} = {}) => {
+	const pattern = [
+		'[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
+		'(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))'
+	].join('|');
+
+	return new RegExp(pattern, onlyFirst ? undefined : 'g');
+};
+
+
+/***/ }),
+
 /***/ 4812:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -12312,6 +12330,18 @@ function onceStrict (fn) {
 
 /***/ }),
 
+/***/ 5591:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+"use strict";
+
+const ansiRegex = __nccwpck_require__(5063);
+
+module.exports = string => typeof string === 'string' ? string.replace(ansiRegex(), '') : string;
+
+
+/***/ }),
+
 /***/ 9318:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -15862,7 +15892,6 @@ module.exports = {
 const core = __nccwpck_require__(2186);
 const { context } = __nccwpck_require__(5438);
 const parse = __nccwpck_require__(1809);
-const { jsonString } = __nccwpck_require__(6254);
 const { getStepLogs, getPlanStepUrl, initOctokit, createPrComment } = __nccwpck_require__(8396);
 const { createComment } = __nccwpck_require__(7876);
 
@@ -15890,11 +15919,11 @@ const main = async () => {
 
   await createPrComment(message, workspace, context);
 
-  core.setOutput("outside", jsonString(result.outside));
-  core.setOutput("action", jsonString(result.action));
-  core.setOutput("output", jsonString(result.output));
-  core.setOutput("warning", jsonString(result.warning));
-  core.setOutput("summary", jsonString(result.summary));
+  core.setOutput("outside", JSON.stringify(result.outside));
+  core.setOutput("action", JSON.stringify(result.action));
+  core.setOutput("output", JSON.stringify(result.output));
+  core.setOutput("warning", JSON.stringify(result.warning));
+  core.setOutput("summary", JSON.stringify(result.summary));
   core.setOutput("should-apply", result.shouldApply);
 };
 
@@ -15907,6 +15936,7 @@ module.exports = main;
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { findLinesBetween, findSections, anyMatch, findLine } = __nccwpck_require__(6254);
+const stripAnsi = __nccwpck_require__(5591);
 
 const getOutsideChangeSection = (inputLines) => {
   const { offset, lines } = findLinesBetween(inputLines, /^Note: Objects have changed outside of Terraform$/, /^─+/);
@@ -15980,11 +16010,9 @@ const getResourceActionSection = (inputLines) => {
 const getOutputChangeSection = (inputLines) => {
   const { offset, lines } = findLinesBetween(inputLines, /^Changes to Outputs:$/, /^[─╷]/);
 
-  const str = lines.join("\n");
   return {
     offset,
     sections: findSections(lines, /^\s{2}[+~-]\s(?<name>.*?)\s=/, /(^\s{2}[+~-]\s(?<name>.*?)\s=)|(^$)/, true),
-    str,
   };
 };
 
@@ -16023,10 +16051,7 @@ const getSummarySection = (inputLines) => {
 };
 
 const parse = (rawLines) => {
-  const lines = [];
-  for (const l of rawLines) {
-    lines.push(l.replace(/\x1b\[[0-9;]*m/g, "")); // eslint-disable-line no-control-regex
-  }
+  const lines = rawLines.map(stripAnsi);
 
   const outside = getOutsideChangeSection(lines);
   const action = getResourceActionSection(lines);
@@ -16076,6 +16101,7 @@ const findLine = (lines, pattern) => {
     match: null,
   };
 };
+
 const findLinesBetween = (lines, beginPattern, endPattern) => {
   const matched = [];
   let found = false;
@@ -16102,7 +16128,7 @@ const findLinesBetween = (lines, beginPattern, endPattern) => {
   };
 };
 
-const findSections = (lines, beginPattern, endPattern, includeEndPattern) => {
+const findSections = (lines, beginPattern, endPattern, includesEndPattern) => {
   const ret = [];
   let groups = {};
   let str = null;
@@ -16115,7 +16141,7 @@ const findSections = (lines, beginPattern, endPattern, includeEndPattern) => {
           ...groups,
           str,
         });
-        if (includeEndPattern) {
+        if (includesEndPattern) {
           const m = line.match(beginPattern);
           if (m) {
             groups = m.groups;
@@ -16139,6 +16165,13 @@ const findSections = (lines, beginPattern, endPattern, includeEndPattern) => {
       }
     }
   }
+  // add the final section
+  if (str) {
+    ret.push({
+      ...groups,
+      str,
+    });
+  }
   return ret;
 };
 
@@ -16155,31 +16188,11 @@ const anyMatch = (patterns, line) => {
   return null;
 };
 
-const jsonEscape = (key, val) => {
-  if (typeof val !== "string") {
-    return val;
-  }
-  return val
-    .replace(/\\/g, "\\\\")
-    .replace(/"/g, '\\"')
-    .replace(/\//g, "\\/")
-    .replace(/\b/g, "\\b")
-    .replace(/\f/g, "\\f")
-    .replace(/\n/g, "\\n")
-    .replace(/\r/g, "\\r")
-    .replace(/\t/g, "\\t");
-};
-
-const jsonString = (obj) => {
-  return JSON.stringify(obj, jsonEscape);
-};
-
 module.exports = {
   findLine,
   findLinesBetween,
   findSections,
   anyMatch,
-  jsonString,
 };
 
 
