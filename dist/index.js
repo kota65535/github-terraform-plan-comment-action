@@ -15988,7 +15988,7 @@ const main = async () => {
   core.info(`Found ${lines.length} lines of logs`);
 
   const result = parse(lines);
-  core.info(JSON.stringify(result));
+  core.info(JSON.stringify(result, null, 2));
 
   const planUrl = await getPlanStepUrl(jobName, stepName, context, result.summary.offset);
 
