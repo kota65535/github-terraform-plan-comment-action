@@ -3,6 +3,7 @@ const { context } = require("@actions/github");
 const parse = require("./parser");
 const { getStepLogs, getPlanStepUrl, initOctokit, createPrComment } = require("./github");
 const { createComment } = require("./github_comment");
+const { logJson } = require("./util");
 
 const main = async () => {
   const jobName = core.getInput("plan-job", { required: true });
@@ -22,7 +23,7 @@ const main = async () => {
   core.info(`Found ${lines.length} lines of logs`);
 
   const result = parse(lines);
-  core.info(JSON.stringify(result));
+  logJson(result);
 
   const planUrl = await getPlanStepUrl(jobName, stepName, context, result.summary.offset);
 
