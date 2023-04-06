@@ -15969,6 +15969,7 @@ const { context } = __nccwpck_require__(5438);
 const parse = __nccwpck_require__(1809);
 const { getStepLogs, getPlanStepUrl, initOctokit, createPrComment } = __nccwpck_require__(8396);
 const { createComment } = __nccwpck_require__(7876);
+const { logJson } = __nccwpck_require__(6254);
 
 const main = async () => {
   const jobName = core.getInput("plan-job", { required: true });
@@ -15988,7 +15989,7 @@ const main = async () => {
   core.info(`Found ${lines.length} lines of logs`);
 
   const result = parse(lines);
-  core.info(JSON.stringify(result, null, 2));
+  logJson(result);
 
   const planUrl = await getPlanStepUrl(jobName, stepName, context, result.summary.offset);
 
@@ -16160,7 +16161,19 @@ module.exports = parse;
 /***/ }),
 
 /***/ 6254:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(2186);
+
+function toJson(obj) {
+  return JSON.stringify(obj, null, 2);
+}
+
+function logJson(message, obj) {
+  core.startGroup(message);
+  core.info(toJson(obj));
+  core.endGroup();
+}
 
 const findLine = (lines, pattern) => {
   for (let i = 0; i < lines.length; i++) {
@@ -16266,6 +16279,7 @@ const anyMatch = (patterns, line) => {
 };
 
 module.exports = {
+  logJson,
   findLine,
   findLinesBetween,
   findSections,
