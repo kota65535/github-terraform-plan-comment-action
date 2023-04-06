@@ -76,7 +76,7 @@ const getJobLogs = async (job, context) => {
   // get job logs
   const res2 = await axios.get(res1.url);
 
-  // remove CRs if exists before splitting.
+  // remove CRs if exists before splitting
   return res2.data.replace(/\r/g, "").split("\n");
 };
 
