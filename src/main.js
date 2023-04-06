@@ -18,9 +18,11 @@ const main = async () => {
 
   initOctokit(githubToken);
 
-  const input = await getStepLogs(jobName, stepName, context);
+  const lines = await getStepLogs(jobName, stepName, context);
+  core.info(`Found ${lines.length} lines of logs`);
 
-  const result = parse(input);
+  const result = parse(lines);
+  core.info(JSON.stringify(result));
 
   const planUrl = await getPlanStepUrl(jobName, stepName, context, result.summary.offset);
 
