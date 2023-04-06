@@ -35,8 +35,6 @@ Use this action after the job where you run `terraform plan`.
     needs:
       - plan
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
       - name: Notify terraform plan result as PR comment
         uses: kota65535/github-terraform-plan-comment-action@v1
         with:
