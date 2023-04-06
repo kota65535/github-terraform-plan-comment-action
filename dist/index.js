@@ -15720,7 +15720,7 @@ const getJobLogs = async (job, context) => {
   // get job logs
   const res2 = await axios.get(res1.url);
 
-  return res2.data.split("\n").replace("\r", "");
+  return res2.data.replace("\r", "").split("\n");
 };
 
 const getContent = async (path, context) => {
