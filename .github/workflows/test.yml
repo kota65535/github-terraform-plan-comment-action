@@ -87,5 +87,5 @@ jobs:
           [ '${{ steps.plan-prod.outputs.should-apply }}' = 'true' ]
           RET=$((RET+$?))
           
-          [[ $RET -ne 0 ]]; then exit 1
+          [[ $RET -ne 0 ]] && exit 1
           
