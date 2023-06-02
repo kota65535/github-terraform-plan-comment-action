@@ -72,10 +72,20 @@ jobs:
           workspace: prod
       - name: Assertion
         run: |
-          set -x
-          diff <(jq --sort-keys . .github/workflows/prod/outside.json) <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.outside }}') &
-          diff <(jq --sort-keys . .github/workflows/prod/action.json)  <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.action }}') &
-          diff <(jq --sort-keys . .github/workflows/prod/output.json)  <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.output }}') &
-          diff <(jq --sort-keys . .github/workflows/prod/warning.json) <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.warning }}') &
-          diff <(jq --sort-keys . .github/workflows/prod/summary.json) <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.summary }}') &
+          set -x +e
+          RET=0
+          diff <(jq --sort-keys . .github/workflows/prod/outside.json) <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.outside }}')
+          RET=$((RET+$?))
+          diff <(jq --sort-keys . .github/workflows/prod/action.json)  <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.action }}')
+          RET=$((RET+$?))
+          diff <(jq --sort-keys . .github/workflows/prod/output.json)  <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.output }}')
+          RET=$((RET+$?))
+          diff <(jq --sort-keys . .github/workflows/prod/warning.json) <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.warning }}')
+          RET=$((RET+$?))
+          diff <(jq --sort-keys . .github/workflows/prod/summary.json) <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.summary }}')
+          RET=$((RET+$?))
           [ '${{ steps.plan-prod.outputs.should-apply }}' = 'true' ]
+          RET=$((RET+$?))
+          
+          [[ $RET -ne 0 ]]; then exit 1
+          
