@@ -57,11 +57,11 @@ jobs:
       - name: Assertion
         run: |
           set -x
-          diff <(jq --sort-keys . .github/workflows/dev/outside.json) - <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.outside }}')
-          diff <(jq --sort-keys . .github/workflows/dev/action.json) - <<< <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.action }}')
-          diff <(jq --sort-keys . .github/workflows/dev/output.json) - <<< <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.output }}')
-          diff <(jq --sort-keys . .github/workflows/dev/warning.json) - <<< <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.warning }}')
-          diff <(jq --sort-keys . .github/workflows/dev/summary.json) - <<< <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.summary }}')
+          diff <(jq --sort-keys . .github/workflows/dev/outside.json) <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.outside }}')
+          diff <(jq --sort-keys . .github/workflows/dev/action.json)  <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.action }}')
+          diff <(jq --sort-keys . .github/workflows/dev/output.json)  <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.output }}')
+          diff <(jq --sort-keys . .github/workflows/dev/warning.json) <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.warning }}')
+          diff <(jq --sort-keys . .github/workflows/dev/summary.json) <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.summary }}')
           [ '${{ steps.plan-dev.outputs.should-apply }}' = 'false' ]
       - name: Notify terraform plan result as PR comment for prod
         uses: ./
@@ -73,9 +73,9 @@ jobs:
       - name: Assertion
         run: |
           set -x
-          diff <(jq --sort-keys . .github/workflows/prod/outside.json) - <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.outside }}')
-          diff <(jq --sort-keys . .github/workflows/prod/action.json) - <<< <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.action }}')
-          diff <(jq --sort-keys . .github/workflows/prod/output.json) - <<< <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.output }}')
-          diff <(jq --sort-keys . .github/workflows/prod/warning.json) - <<< <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.warning }}')
-          diff <(jq --sort-keys . .github/workflows/prod/summary.json) - <<< <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.summary }}')
+          diff <(jq --sort-keys . .github/workflows/prod/outside.json) <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.outside }}')
+          diff <(jq --sort-keys . .github/workflows/prod/action.json)  <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.action }}')
+          diff <(jq --sort-keys . .github/workflows/prod/output.json)  <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.output }}')
+          diff <(jq --sort-keys . .github/workflows/prod/warning.json) <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.warning }}')
+          diff <(jq --sort-keys . .github/workflows/prod/summary.json) <(jq --sort-keys . <<< '${{ steps.plan-prod.outputs.summary }}')
           [ '${{ steps.plan-prod.outputs.should-apply }}' = 'true' ]
