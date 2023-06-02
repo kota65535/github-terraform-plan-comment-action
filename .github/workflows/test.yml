@@ -56,13 +56,23 @@ jobs:
           workspace: dev
       - name: Assertion
         run: |
-          set -x
-          diff <(jq --sort-keys . .github/workflows/dev/outside.json) <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.outside }}') &
-          diff <(jq --sort-keys . .github/workflows/dev/action.json)  <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.action }}') &
-          diff <(jq --sort-keys . .github/workflows/dev/output.json)  <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.output }}') &
-          diff <(jq --sort-keys . .github/workflows/dev/warning.json) <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.warning }}') &
-          diff <(jq --sort-keys . .github/workflows/dev/summary.json) <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.summary }}') &
+          set -x +e
+          RET=0
+          diff <(jq --sort-keys . .github/workflows/dev/outside.json) <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.outside }}')
+          RET=$((RET+$?))
+          diff <(jq --sort-keys . .github/workflows/dev/action.json)  <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.action }}')
+          RET=$((RET+$?))
+          diff <(jq --sort-keys . .github/workflows/dev/output.json)  <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.output }}')
+          RET=$((RET+$?))
+          diff <(jq --sort-keys . .github/workflows/dev/warning.json) <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.warning }}')
+          RET=$((RET+$?))
+          diff <(jq --sort-keys . .github/workflows/dev/summary.json) <(jq --sort-keys . <<< '${{ steps.plan-dev.outputs.summary }}')
+          RET=$((RET+$?))
           [ '${{ steps.plan-dev.outputs.should-apply }}' = 'false' ]
+          RET=$((RET+$?))
+          
+          [[ $RET -ne 0 ]] && exit 1
+          
       - name: Notify terraform plan result as PR comment for prod
         uses: ./
         id: plan-prod
