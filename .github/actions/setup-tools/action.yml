@@ -30,3 +30,7 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ steps.versions.outputs.nodejs }}
+    - name: Create .env file
+      run: |
+        echo 'GITHUB_TOKEN={{ secrets.PERSONAL_TOKEN }}' > .env
+      shell: bash
