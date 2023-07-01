@@ -85,6 +85,7 @@ const getContent = async (path, context) => {
     owner: context.repo.owner,
     repo: context.repo.repo,
     path,
+    ref: context.ref,
   });
   let ret;
   if (Array.isArray(fileOrDir.data)) {
