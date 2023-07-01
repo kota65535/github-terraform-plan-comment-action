@@ -24932,6 +24932,7 @@ const main = __nccwpck_require__(1713);
 const { logJson } = __nccwpck_require__(6254);
 
 logJson("context", context);
+logJson("env", process.env);
 try {
   main();
 } catch (error) {
