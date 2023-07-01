@@ -1,7 +1,7 @@
 const core = require("@actions/core");
 const { initOctokit } = require("./github");
 
-const getInputs = async () => {
+const getInputs = () => {
   const jobName = core.getInput("plan-job", { required: true });
   const stepName = core.getInput("plan-step", { required: true });
   const workspace = core.getInput("workspace");

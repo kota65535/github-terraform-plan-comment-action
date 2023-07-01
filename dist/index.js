@@ -15972,7 +15972,7 @@ module.exports = {
 const core = __nccwpck_require__(2186);
 const { initOctokit } = __nccwpck_require__(8396);
 
-const getInputs = async () => {
+const getInputs = () => {
   const jobName = core.getInput("plan-job", { required: true });
   const stepName = core.getInput("plan-step", { required: true });
   const workspace = core.getInput("workspace");
