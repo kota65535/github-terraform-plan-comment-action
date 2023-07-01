@@ -1,35 +1,26 @@
 const core = require("@actions/core");
 const { context } = require("@actions/github");
 const parse = require("./parser");
-const { getStepLogs, getPlanStepUrl, initOctokit, createPrComment } = require("./github");
+const { getStepLogs, getPlanStepUrl, createPrComment } = require("./github");
 const { createComment } = require("./github_comment");
 const { logJson } = require("./util");
+const { getInputs } = require("./input");
 
 const main = async () => {
-  const jobName = core.getInput("plan-job", { required: true });
-  const stepName = core.getInput("plan-step", { required: true });
-  const workspace = core.getInput("workspace");
-  let githubToken = core.getInput("github-token");
-  const defaultGithubToken = core.getInput("default-github-token");
+  const inputs = getInputs();
+  logJson("inputs", inputs);
 
-  githubToken = githubToken || process.env.GITHUB_TOKEN || defaultGithubToken;
-  if (!githubToken) {
-    throw new Error("No GitHub token provided");
-  }
-
-  initOctokit(githubToken);
-
-  const lines = await getStepLogs(jobName, stepName, context);
+  const lines = await getStepLogs(inputs.jobName, inputs.stepName, context);
   core.info(`Found ${lines.length} lines of logs`);
 
   const result = parse(lines);
   logJson("Parsed logs", result);
 
-  const planUrl = await getPlanStepUrl(jobName, stepName, context, result.summary.offset);
+  const planUrl = await getPlanStepUrl(inputs.jobName, inputs.stepName, context, result.summary.offset);
 
-  const message = createComment(result, workspace, planUrl);
+  const message = createComment(result, inputs.workspace, planUrl);
 
-  await createPrComment(message, workspace, context);
+  await createPrComment(message, inputs.workspace, context);
 
   core.setOutput("outside", JSON.stringify(result.outside));
   core.setOutput("action", JSON.stringify(result.action));

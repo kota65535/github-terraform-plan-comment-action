@@ -2,7 +2,7 @@ const { getOctokit } = require("@actions/github");
 const axios = require("axios");
 const { getMarkerText } = require("./github_comment");
 const yaml = require("yaml");
-const path = require("path");
+const npath = require("path");
 
 let octokit;
 
@@ -85,17 +85,21 @@ const getContent = async (path, context) => {
     owner: context.repo.owner,
     repo: context.repo.repo,
     path,
+    ref: context.ref,
   });
   let ret;
   if (Array.isArray(fileOrDir.data)) {
     const files = await Promise.all(
-      fileOrDir.data.map((d) =>
-        octokit.rest.repos.getContent({
-          owner: context.repo.owner,
-          repo: context.repo.repo,
-          path: d.path,
-        })
-      )
+      fileOrDir.data
+        .filter((d) => d.type === "file")
+        .map((d) =>
+          octokit.rest.repos.getContent({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            path: d.path,
+            ref: context.ref,
+          })
+        )
     );
     ret = files.map((f) => f.data);
     ret.forEach((r) => {
@@ -113,7 +117,7 @@ const getNumActionsOfStepsRecursive = async (step, context) => {
   if (step.uses) {
     // handle local composite actions
     if (step.uses.startsWith("./.github/actions")) {
-      const actionDir = await getContent(path.normalize(step.uses), context);
+      const actionDir = await getContent(npath.normalize(step.uses), context);
       if (!Array.isArray(actionDir)) {
         return ret;
       }
