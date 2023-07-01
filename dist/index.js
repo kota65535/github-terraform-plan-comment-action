@@ -15801,6 +15801,8 @@ const getStepLogs = async (jobName, stepName, context) => {
   const logs = await getJobLogs(job, context);
   const numStepActions = await getNumActionsOfSteps(jobName, context);
 
+  const startPattern = process.env.RUNNER_DEBUG ? /^##\[debug\]Evaluating condition for step: / : /^##\[group\]Run /;
+
   // divide logs by each step
   const stepsLogs = [];
   let lines = [];
@@ -15813,7 +15815,7 @@ const getStepLogs = async (jobName, stepName, context) => {
     }
     const body = m1[2];
     // each step begins with this pattern for now
-    const m2 = body.match(/^##\[group\]Run /);
+    const m2 = body.match(startPattern);
     if (m2) {
       numStepActions[curStep] -= 1;
       if (numStepActions[curStep] === 0) {
