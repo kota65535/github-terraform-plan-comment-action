@@ -50,6 +50,7 @@ describe("github", () => {
         owner: "kota65535",
         repo: "github-terraform-plan-comment-action",
       },
+      ref: "main",
     });
     assert.isNotNull(files);
     assert.isArray(files);
