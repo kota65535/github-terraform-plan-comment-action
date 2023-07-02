@@ -15801,7 +15801,8 @@ const getStepLogs = async (jobName, stepName, context) => {
   const logs = await getJobLogs(job, context);
   const numStepActions = await getNumActionsOfSteps(jobName, context);
 
-  const startPattern = process.env.RUNNER_DEBUG ? /^##\[debug\]Evaluating condition for step: / : /^##\[group\]Run /;
+  const startPattern =
+    process.env.RUNNER_DEBUG === "1" ? /^##\[debug\]Evaluating condition for step: / : /^##\[group\]Run /;
 
   // divide logs by each step
   const stepsLogs = [];
