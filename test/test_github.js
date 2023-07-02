@@ -91,7 +91,7 @@ describe("github", function () {
         repo: "github-terraform-plan-comment-action",
       },
       workflow: "Test",
-      runId: "5433757045",
+      runId: "5433882732",
     });
     assert.equal(lines.length, 84);
   });
