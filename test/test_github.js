@@ -69,8 +69,8 @@ describe("github", function () {
     assert.deepEqual(numActions, [1, 1, 6, 1, 1, 1, 1, 1]);
   });
 
+  // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/5429707815/jobs/9881735654
   it("gets a step logs", async function () {
-    console.log(JSON.stringify(process.env, null, 2));
     const lines = await getStepLogs("plan", "Run terraform plan for dev", {
       repo: {
         owner: "kota65535",
@@ -82,7 +82,9 @@ describe("github", function () {
     assert.equal(lines.length, 13);
   });
 
+  // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/5433757045/jobs/9881689538
   it("gets a step logs when debug enabled", async function () {
+    process.env.RUNNER_DEBUG = "1";
     const lines = await getStepLogs("plan", "Run terraform plan for dev", {
       repo: {
         owner: "kota65535",
@@ -91,6 +93,6 @@ describe("github", function () {
       workflow: "Test",
       runId: "5433757045",
     });
-    assert.equal(lines.length, 29);
+    assert.equal(lines.length, 84);
   });
 });
