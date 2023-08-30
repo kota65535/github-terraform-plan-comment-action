@@ -16,6 +16,13 @@ GitHub Action for putting terraform plan result as a PR comment.
 | `workspace`    | Terraform workspace name                      | No       | N/A                                                     |
 | `github-token` | GitHub token                                  | No       | `${{ env.GITHUB_TOKEN }}` or<br/> `${{ github.token }}` | 
 
+## Outputs
+
+| Name             | Description                                                |
+|------------------|------------------------------------------------------------|
+| `should-apply`   | `true` if `terraform apply` is needed, otherwise `false`   |
+| `should-refresh` | `true` if `terraform refresh` is needed, otherwise `false` |
+
 ## Usage
 
 Use this action after the job where you run `terraform plan`.
