@@ -26,34 +26,19 @@ ${props.icon} **${plan.summary.str}**
 
   if (plan.summary.add > 0) {
     const added = plan.action.sections.create.concat(plan.action.sections.replace);
-    const names = added.map((a) => a.name).join("\n");
-    ret += `### Add
-\`\`\`
-${names}
-\`\`\`
-
-`;
+    const names = added.map((a) => `* \`${a.name}\``).join("\n");
+    ret += `### Add\n${names}\n`;
   }
 
   if (plan.summary.change > 0) {
-    const names = plan.action.sections.update.map((a) => a.name).join("\n");
-    ret += `### Change
-\`\`\`
-${names}
-\`\`\`
-
-`;
+    const names = plan.action.sections.update.map((a) => `* \`${a.name}\``).join("\n");
+    ret += `### Change\n${names}\n`;
   }
 
   if (plan.summary.destroy > 0) {
     const destroyed = plan.action.sections.destroy.concat(plan.action.sections.replace);
-    const names = destroyed.map((a) => a.name).join("\n");
-    ret += `### Destroy
-\`\`\`
-${names}
-\`\`\`
-
-`;
+    const names = destroyed.map((a) => `* \`${a.name}\``).join("\n");
+    ret += `### Destroy\n${names}\n`;
   }
 
   return ret;
