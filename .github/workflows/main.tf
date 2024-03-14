@@ -5,9 +5,10 @@ terraform {
     key            = "github-action-test.tfstate"
   }
   required_providers {
+    // Do not upgrade this provider so that we can test warning message!
     aws = {
       source  = "hashicorp/aws"
-      version = "5.40.0"
+      version = "4.67.0"
     }
   }
 }
@@ -29,6 +30,10 @@ resource "aws_dynamodb_table" "test" {
 
 resource "aws_s3_bucket" "test" {
   bucket = "github-action-test-${terraform.workspace}"
+  acl    = "private"
+  versioning {
+    enabled = true
+  }
 }
 
 output timestamp {
