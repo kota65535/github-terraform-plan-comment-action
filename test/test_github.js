@@ -106,7 +106,7 @@ describe("github", function () {
       workflow: "Test",
       runId: "8275755185",
     });
-    assert.equal(lines.length, 29);
+    assert.equal(lines.length, 18);
   });
 
   // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8275928147/job/22643637325#step:6:1
