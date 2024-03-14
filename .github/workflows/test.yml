@@ -102,6 +102,7 @@ jobs:
         with:
           plan-job: plan
           plan-step: Run terraform plan for prod
+          plan-index: 1
           workspace: prod
       - name: Assertion
         run: |
