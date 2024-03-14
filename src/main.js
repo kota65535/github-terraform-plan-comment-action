@@ -11,7 +11,7 @@ const getPlanStepLogs = async (jobName, context) => {
   for (const lines of stepLogs) {
     const parsed = parse(lines, true);
     if (parsed.summary.offset >= 0) {
-      return { lines, parsed };
+      return lines;
     }
   }
   throw new Error(
@@ -23,8 +23,10 @@ const main = async () => {
   const inputs = getInputs();
   logJson("inputs", inputs);
 
-  const { lines, parsed } = await getPlanStepLogs(inputs.jobName, context);
+  const lines = await getPlanStepLogs(inputs.jobName, context);
   logJson(`${lines.length} lines of logs found`, lines);
+  
+  const parsed = parse(lines)
   logJson("Parsed logs", parsed);
 
   const planUrl = await getStepUrl(inputs.jobName, inputs.stepName, context, parsed.summary.offset);

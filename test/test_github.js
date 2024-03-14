@@ -1,5 +1,6 @@
 const { initOctokit, getWorkflow, getJob, getContent, getNumActionsOfSteps } = require("../src/github");
 const { getPlanStepLogs } = require("../src/main");
+const parse = require("../src/parser");
 const assert = require("chai").assert;
 require("dotenv").config();
 
@@ -72,7 +73,7 @@ describe("github", function () {
 
   // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8276189769/job/22644332135?pr=35#step:8:1
   it("gets a step logs", async function () {
-    const result = await getPlanStepLogs("plan", {
+    const lines = await getPlanStepLogs("plan", {
       repo: {
         owner: "kota65535",
         repo: "github-terraform-plan-comment-action",
@@ -80,14 +81,15 @@ describe("github", function () {
       workflow: "Test",
       runId: "8276189769",
     });
-    assert.notEqual(result.parsed.summary.warning, -1);
-    assert.notEqual(result.parsed.summary.offset, -1);
+    const parsed = parse(lines);
+    assert.notEqual(parsed.summary.warning, -1);
+    assert.notEqual(parsed.summary.offset, -1);
   });
 
   // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8277529775/job/22648177184?pr=35#step:8:1
   it("gets a step logs when debug enabled", async function () {
     process.env.RUNNER_DEBUG = "1";
-    const result = await getPlanStepLogs("plan", {
+    const lines = await getPlanStepLogs("plan", {
       repo: {
         owner: "kota65535",
         repo: "github-terraform-plan-comment-action",
@@ -95,7 +97,8 @@ describe("github", function () {
       workflow: "Test",
       runId: "8277529775",
     });
-    assert.notEqual(result.parsed.summary.warning, -1);
-    assert.notEqual(result.parsed.summary.offset, -1);
+    const parsed = parse(lines);
+    assert.notEqual(parsed.summary.warning, -1);
+    assert.notEqual(parsed.summary.offset, -1);
   });
 });
