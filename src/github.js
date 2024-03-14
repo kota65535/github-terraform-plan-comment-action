@@ -1,8 +1,6 @@
 const { getOctokit } = require("@actions/github");
 const axios = require("axios");
 const { getMarkerText } = require("./github_comment");
-const yaml = require("yaml");
-const npath = require("path");
 
 let octokit;
 
@@ -80,7 +78,7 @@ const getJobLogs = async (job, context) => {
   return res2.data.replace(/\r/g, "").split("\n");
 };
 
-const getContent = async (path, context) => {
+const getContent = async (path, context, pattern) => {
   const fileOrDir = await octokit.rest.repos.getContent({
     owner: context.repo.owner,
     repo: context.repo.repo,
@@ -91,15 +89,15 @@ const getContent = async (path, context) => {
   if (Array.isArray(fileOrDir.data)) {
     const files = await Promise.all(
       fileOrDir.data
-        .filter((d) => d.type === "file")
+        .filter((d) => d.type === "file" && (pattern ? d.name.match(pattern) : true))
         .map((d) =>
           octokit.rest.repos.getContent({
             owner: context.repo.owner,
             repo: context.repo.repo,
             path: d.path,
             ref: context.ref,
-          })
-        )
+          }),
+        ),
     );
     ret = files.map((f) => f.data);
     ret.forEach((r) => {
@@ -112,50 +110,9 @@ const getContent = async (path, context) => {
   return ret;
 };
 
-const getNumActionsOfStepsRecursive = async (step, context) => {
-  let ret = 1;
-  if (step.uses) {
-    // handle local composite actions
-    if (step.uses.startsWith("./.github/actions")) {
-      const actionDir = await getContent(npath.normalize(step.uses), context);
-      if (!Array.isArray(actionDir)) {
-        return ret;
-      }
-      const actionFile = actionDir.find((d) => d.name.match(/action.ya?ml/));
-      const actionYaml = yaml.parse(actionFile.content);
-      for (const s of actionYaml.runs.steps) {
-        ret += await getNumActionsOfStepsRecursive(s, context);
-      }
-    }
-    // TODO: handle remote composite actions
-  }
-  return ret;
-};
-
-const getNumActionsOfSteps = async (jobName, context) => {
-  const workflow = await getWorkflow(context);
-  const workflowFile = await getContent(workflow.path, context);
-  if (Array.isArray(workflowFile)) {
-    throw new Error("workflow should be a file");
-  }
-  const workflowYaml = yaml.parse(workflowFile.content);
-  const steps = workflowYaml.jobs[jobName].steps;
-  const numActions = [1];
-  for (const s of steps) {
-    numActions.push(await getNumActionsOfStepsRecursive(s, context));
-  }
-  return numActions;
-};
-
-const getStepLogs = async (jobName, stepName, context) => {
+const getStepLogs = async (jobName, context) => {
   const job = await getJob(jobName, context);
-  const step = job.steps.find((s) => s.name === stepName);
-  if (!step) {
-    throw new Error(`failed to get step with name: ${stepName}`);
-  }
-
   const logs = await getJobLogs(job, context);
-  const numStepActions = await getNumActionsOfSteps(jobName, context);
 
   const startPattern =
     process.env.RUNNER_DEBUG === "1" ? /^##\[debug\]Evaluating condition for step: / : /^##\[group\]Run /;
@@ -163,35 +120,27 @@ const getStepLogs = async (jobName, stepName, context) => {
   // divide logs by each step
   const stepsLogs = [];
   let lines = [];
-  let curStep = 0;
   for (const l of logs) {
-    // trim ISO8601 date string
-    const m1 = l.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d+Z) (.*)$/);
-    if (!m1) {
-      continue;
+    let body = "";
+    if (l) {
+      [, body] = l.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d+Z (.*)$/);
     }
-    const body = m1[2];
-    // each step begins with this pattern for now
-    const m2 = body.match(startPattern);
-    if (m2) {
-      numStepActions[curStep] -= 1;
-      if (numStepActions[curStep] === 0) {
+    if (body.match(startPattern)) {
+      if (lines.length > 0) {
         stepsLogs.push(lines);
-        lines = [body];
-        curStep += 1;
-      } else {
-        lines.push(body);
+        lines = [];
       }
+      lines.push(body);
     } else {
       lines.push(body);
     }
   }
   stepsLogs.push(lines);
 
-  return stepsLogs[step.number - 1];
+  return stepsLogs;
 };
 
-const getPlanStepUrl = async (jobName, stepName, context, offset) => {
+const getStepUrl = async (jobName, stepName, context, offset) => {
   const job = await getJob(jobName, context);
   const step = job.steps.find((s) => s.name === stepName);
   if (!step) {
@@ -244,8 +193,7 @@ module.exports = {
   getWorkflow,
   getJob,
   getContent,
-  getNumActionsOfSteps,
   getStepLogs,
-  getPlanStepUrl,
+  getStepUrl,
   createPrComment,
 };

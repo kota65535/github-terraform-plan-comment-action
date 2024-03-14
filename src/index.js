@@ -1,6 +1,6 @@
 const core = require("@actions/core");
 const { context } = require("@actions/github");
-const main = require("./main");
+const { main } = require("./main");
 const { logJson } = require("./util");
 
 logJson("context", context);
