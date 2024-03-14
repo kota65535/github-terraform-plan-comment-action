@@ -69,7 +69,34 @@ describe("github", function () {
     assert.deepEqual(numActions, [1, 1, 6, 1, 1, 1, 1, 1]);
   });
 
-  // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8275755185/job/22643349747?pr=37#step:6:1
+  // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8275897301/job/22643565191?pr=37#step:6:1
+  // terraform plan
+  //   shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+  //   env:
+  //     AWS_DEFAULT_REGION: ap-northeast-1
+  //     AWS_REGION: ap-northeast-1
+  //     AWS_ACCESS_KEY_ID: ***
+  //     AWS_SECRET_ACCESS_KEY: ***
+  //     TERRAFORM_CLI_PATH: /home/runner/work/_temp/0a6088ed-dc65-4ef0-a960-17bde7e0f1ea
+  // /home/runner/work/_temp/0a6088ed-dc65-4ef0-a960-17bde7e0f1ea/terraform-bin plan
+  // aws_dynamodb_table.test: Refreshing state... [id=github-action-test-dev]
+  // aws_s3_bucket.test: Refreshing state... [id=github-action-test-dev]
+  //
+  // No changes. Your infrastructure matches the configuration.
+  //
+  // Terraform has compared your real infrastructure against your configuration
+  // and found no differences, so no changes are needed.
+  // ╷
+  // │ Warning: Argument is deprecated
+  // │
+  // │   with aws_s3_bucket.test,
+  // │   on main.tf line 31, in resource "aws_s3_bucket" "test":
+  // │   31: resource "aws_s3_bucket" "test" {
+  // │
+  // │ Use the aws_s3_bucket_versioning resource instead
+  // │
+  // │ (and 3 more similar warnings elsewhere)
+  // ╵
   it("gets a step logs", async function () {
     const lines = await getStepLogs("plan", "Run terraform plan for dev", {
       repo: {
@@ -79,7 +106,7 @@ describe("github", function () {
       workflow: "Test",
       runId: "8275755185",
     });
-    assert.equal(lines.length, 18);
+    assert.equal(lines.length, 29);
   });
 
   // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/5433757045/jobs/9881689538
