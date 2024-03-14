@@ -80,7 +80,7 @@ const getJobLogs = async (job, context) => {
   return res2.data.replace(/\r/g, "").split("\n");
 };
 
-const getContent = async (path, context) => {
+const getContent = async (path, context, pattern) => {
   const fileOrDir = await octokit.rest.repos.getContent({
     owner: context.repo.owner,
     repo: context.repo.repo,
@@ -91,7 +91,7 @@ const getContent = async (path, context) => {
   if (Array.isArray(fileOrDir.data)) {
     const files = await Promise.all(
       fileOrDir.data
-        .filter((d) => d.type === "file")
+        .filter((d) => d.type === "file" && (pattern ? d.name.match(pattern) : true))
         .map((d) =>
           octokit.rest.repos.getContent({
             owner: context.repo.owner,
@@ -115,19 +115,25 @@ const getContent = async (path, context) => {
 const getNumActionsOfStepsRecursive = async (step, context) => {
   let ret = 1;
   if (step.uses) {
-    // handle local composite actions
-    if (step.uses.startsWith("./.github/actions")) {
-      const actionDir = await getContent(npath.normalize(step.uses), context);
-      if (!Array.isArray(actionDir)) {
-        return ret;
-      }
-      const actionFile = actionDir.find((d) => d.name.match(/action.ya?ml/));
-      const actionYaml = yaml.parse(actionFile.content);
-      for (const s of actionYaml.runs.steps) {
+    let actionFile;
+    if (step.uses.startsWith("./")) {
+      // Local action
+      actionFile = await getContent(npath.normalize(step.uses), context, /action.ya?ml/);
+    } else {
+      // Remote action
+      const [match, owner, repo, ref] = step.uses.match(/(.*)\/(.*)@(.*)/);
+      actionFile = await getContent(".", { repo: { owner, repo }, ref }, /action.ya?ml/);
+    }
+    if (actionFile.length !== 1) {
+      return ret;
+    }
+    const actionYaml = yaml.parse(actionFile[0].content);
+    const steps = actionYaml.runs.steps;
+    if (steps) {
+      for (const s of steps) {
         ret += await getNumActionsOfStepsRecursive(s, context);
       }
     }
-    // TODO: handle remote composite actions
   }
   return ret;
 };
