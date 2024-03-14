@@ -69,7 +69,7 @@ describe("github", function () {
     assert.deepEqual(numActions, [1, 1, 6, 1, 1, 1, 1, 1]);
   });
 
-  // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/5429707815/jobs/9881735654
+  // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8275755185/job/22643349747?pr=37#step:6:1
   it("gets a step logs", async function () {
     const lines = await getStepLogs("plan", "Run terraform plan for dev", {
       repo: {
@@ -77,9 +77,9 @@ describe("github", function () {
         repo: "github-terraform-plan-comment-action",
       },
       workflow: "Test",
-      runId: "5429707815",
+      runId: "8275755185",
     });
-    assert.equal(lines.length, 13);
+    assert.equal(lines.length, 18);
   });
 
   // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/5433757045/jobs/9881689538
