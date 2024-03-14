@@ -121,15 +121,10 @@ const getStepLogs = async (jobName, context) => {
   const stepsLogs = [];
   let lines = [];
   for (const l of logs) {
-    if (!l) {
-      continue;
+    let body = "";
+    if (l) {
+      [, body] = l.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d+Z (.*)$/);
     }
-    // trim ISO8601 date string
-    const [_, date, body] = l.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d+Z) (.*)$/);
-    if (!(date && body)) {
-      continue;
-    }
-    // each step begins with this pattern for now
     if (body.match(startPattern)) {
       if (lines.length > 0) {
         stepsLogs.push(lines);
