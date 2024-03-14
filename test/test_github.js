@@ -70,7 +70,7 @@ describe("github", function () {
     assert.deepEqual(numActions, [1, 1, 6, 1, 1, 1, 1, 1]);
   });
 
-  // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8276189769/job/22644332135?pr=35
+  // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8276189769/job/22644332135?pr=35#step:8:1
   it("gets a step logs", async function () {
     const result = await getPlanStepLogs("plan", {
       repo: {
@@ -84,7 +84,7 @@ describe("github", function () {
     assert.notEqual(result.parsed.summary.offset, -1);
   });
 
-  // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8275928147/job/22643637325#step:6:1
+  // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8277529775/job/22648177184?pr=35#step:8:1
   it("gets a step logs when debug enabled", async function () {
     process.env.RUNNER_DEBUG = "1";
     const result = await getPlanStepLogs("plan", {
@@ -93,7 +93,7 @@ describe("github", function () {
         repo: "github-terraform-plan-comment-action",
       },
       workflow: "Test",
-      runId: "8275928147",
+      runId: "8277529775",
     });
     assert.notEqual(result.parsed.summary.warning, -1);
     assert.notEqual(result.parsed.summary.offset, -1);

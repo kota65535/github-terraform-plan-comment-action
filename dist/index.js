@@ -13229,7 +13229,7 @@ const getStepLogs = async (jobName, context) => {
   return stepsLogs;
 };
 
-const getPlanStepUrl = async (jobName, stepName, context, offset) => {
+const getStepUrl = async (jobName, stepName, context, offset) => {
   const job = await getJob(jobName, context);
   const step = job.steps.find((s) => s.name === stepName);
   if (!step) {
@@ -13284,7 +13284,7 @@ module.exports = {
   getContent,
   getNumActionsOfSteps,
   getStepLogs,
-  getPlanStepUrl,
+  getStepUrl,
   createPrComment,
 };
 
@@ -13404,7 +13404,7 @@ module.exports = {
 const core = __nccwpck_require__(2186);
 const { context } = __nccwpck_require__(5438);
 const parse = __nccwpck_require__(1809);
-const { getStepLogs, getPlanStepUrl, createPrComment } = __nccwpck_require__(8396);
+const { getStepLogs, getStepUrl, createPrComment } = __nccwpck_require__(8396);
 const { createComment } = __nccwpck_require__(7876);
 const { logJson } = __nccwpck_require__(6254);
 const { getInputs } = __nccwpck_require__(6);
@@ -13430,7 +13430,7 @@ const main = async () => {
   logJson(`${lines.length} lines of logs found`, lines);
   logJson("Parsed logs", parsed);
 
-  const planUrl = await getPlanStepUrl(inputs.jobName, inputs.stepName, context, parsed.summary.offset);
+  const planUrl = await getStepUrl(inputs.jobName, inputs.stepName, context, parsed.summary.offset);
 
   const message = createComment(parsed, inputs.workspace, planUrl);
 
@@ -26713,7 +26713,7 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(2186);
 const { context } = __nccwpck_require__(5438);
-const main = __nccwpck_require__(1713);
+const { main } = __nccwpck_require__(1713);
 const { logJson } = __nccwpck_require__(6254);
 
 logJson("context", context);

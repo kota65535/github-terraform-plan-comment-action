@@ -192,7 +192,7 @@ const getStepLogs = async (jobName, context) => {
   return stepsLogs;
 };
 
-const getPlanStepUrl = async (jobName, stepName, context, offset) => {
+const getStepUrl = async (jobName, stepName, context, offset) => {
   const job = await getJob(jobName, context);
   const step = job.steps.find((s) => s.name === stepName);
   if (!step) {
@@ -247,6 +247,6 @@ module.exports = {
   getContent,
   getNumActionsOfSteps,
   getStepLogs,
-  getPlanStepUrl,
+  getStepUrl,
   createPrComment,
 };

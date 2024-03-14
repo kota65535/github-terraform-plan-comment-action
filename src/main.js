@@ -1,7 +1,7 @@
 const core = require("@actions/core");
 const { context } = require("@actions/github");
 const parse = require("./parser");
-const { getStepLogs, getPlanStepUrl, createPrComment } = require("./github");
+const { getStepLogs, getStepUrl, createPrComment } = require("./github");
 const { createComment } = require("./github_comment");
 const { logJson } = require("./util");
 const { getInputs } = require("./input");
@@ -27,7 +27,7 @@ const main = async () => {
   logJson(`${lines.length} lines of logs found`, lines);
   logJson("Parsed logs", parsed);
 
-  const planUrl = await getPlanStepUrl(inputs.jobName, inputs.stepName, context, parsed.summary.offset);
+  const planUrl = await getStepUrl(inputs.jobName, inputs.stepName, context, parsed.summary.offset);
 
   const message = createComment(parsed, inputs.workspace, planUrl);
 
