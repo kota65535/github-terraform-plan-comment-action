@@ -1,4 +1,4 @@
-const { initOctokit, getWorkflow, getJob, getContent, getNumActionsOfSteps } = require("../src/github");
+const { initOctokit, getWorkflow, getJob, getContent } = require("../src/github");
 const { getPlanStepLogs } = require("../src/main");
 const parse = require("../src/parser");
 const assert = require("chai").assert;
@@ -58,17 +58,6 @@ describe("github", function () {
     assert.isNotNull(files);
     assert.isArray(files);
     files.forEach((f) => assert.isString(f.content));
-  });
-
-  it("get numbers of each steps", async function () {
-    const numActions = await getNumActionsOfSteps("plan", {
-      repo: {
-        owner: "kota65535",
-        repo: "github-terraform-plan-comment-action",
-      },
-      workflow: "Test",
-    });
-    assert.deepEqual(numActions, [1, 1, 6, 1, 1, 1, 1, 1]);
   });
 
   // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8276189769/job/22644332135?pr=35#step:8:1
