@@ -7,10 +7,9 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "4.67.0"
+      version = "5.40.0"
     }
   }
-  required_version = "~> 1.4.0"
 }
 
 provider "aws" {
@@ -30,10 +29,6 @@ resource "aws_dynamodb_table" "test" {
 
 resource "aws_s3_bucket" "test" {
   bucket = "github-action-test-${terraform.workspace}"
-  acl    = "private"
-  versioning {
-    enabled = true
-  }
 }
 
 output timestamp {
