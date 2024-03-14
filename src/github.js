@@ -153,13 +153,8 @@ const getNumActionsOfSteps = async (jobName, context) => {
   return numActions;
 };
 
-const getStepLogs = async (jobName, stepName, context) => {
+const getStepLogs = async (jobName, context) => {
   const job = await getJob(jobName, context);
-  const step = job.steps.find((s) => s.name === stepName);
-  if (!step) {
-    throw new Error(`failed to get step with name: ${stepName}`);
-  }
-
   const logs = await getJobLogs(job, context);
   const numStepActions = await getNumActionsOfSteps(jobName, context);
 
@@ -194,7 +189,7 @@ const getStepLogs = async (jobName, stepName, context) => {
   }
   stepsLogs.push(lines);
 
-  return stepsLogs[step.number - 1];
+  return stepsLogs;
 };
 
 const getPlanStepUrl = async (jobName, stepName, context, offset) => {

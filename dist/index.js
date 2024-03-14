@@ -13190,13 +13190,8 @@ const getNumActionsOfSteps = async (jobName, context) => {
   return numActions;
 };
 
-const getStepLogs = async (jobName, stepName, context) => {
+const getStepLogs = async (jobName, context) => {
   const job = await getJob(jobName, context);
-  const step = job.steps.find((s) => s.name === stepName);
-  if (!step) {
-    throw new Error(`failed to get step with name: ${stepName}`);
-  }
-
   const logs = await getJobLogs(job, context);
   const numStepActions = await getNumActionsOfSteps(jobName, context);
 
@@ -13231,7 +13226,7 @@ const getStepLogs = async (jobName, stepName, context) => {
   }
   stepsLogs.push(lines);
 
-  return stepsLogs[step.number - 1];
+  return stepsLogs;
 };
 
 const getPlanStepUrl = async (jobName, stepName, context, offset) => {
@@ -13414,32 +13409,46 @@ const { createComment } = __nccwpck_require__(7876);
 const { logJson } = __nccwpck_require__(6254);
 const { getInputs } = __nccwpck_require__(6);
 
+const getPlanStepLogs = async (jobName, context) => {
+  const stepLogs = await getStepLogs(jobName, context);
+  for (const lines of stepLogs) {
+    const parsed = parse(lines, true);
+    if (parsed.summary.offset >= 0) {
+      return { lines, parsed };
+    }
+  }
+  throw new Error(
+    "Terraform Plan output not found. This may be due to the format change of the recent Terraform version",
+  );
+};
+
 const main = async () => {
   const inputs = getInputs();
   logJson("inputs", inputs);
 
-  const lines = await getStepLogs(inputs.jobName, inputs.stepName, context);
-  core.info(`Found ${lines.length} lines of logs`);
+  const { lines, parsed } = await getPlanStepLogs(inputs.jobName, context);
+  logJson(`${lines.length} lines of logs found`, lines);
+  logJson("Parsed logs", parsed);
 
-  const result = parse(lines);
-  logJson("Parsed logs", result);
+  const planUrl = await getPlanStepUrl(inputs.jobName, inputs.stepName, context, parsed.summary.offset);
 
-  const planUrl = await getPlanStepUrl(inputs.jobName, inputs.stepName, context, result.summary.offset);
-
-  const message = createComment(result, inputs.workspace, planUrl);
+  const message = createComment(parsed, inputs.workspace, planUrl);
 
   await createPrComment(message, inputs.workspace, context);
 
-  core.setOutput("outside", JSON.stringify(result.outside));
-  core.setOutput("action", JSON.stringify(result.action));
-  core.setOutput("output", JSON.stringify(result.output));
-  core.setOutput("warning", JSON.stringify(result.warning));
-  core.setOutput("summary", JSON.stringify(result.summary));
-  core.setOutput("should-apply", result.shouldApply);
-  core.setOutput("should-refresh", result.shouldRefresh);
+  core.setOutput("outside", JSON.stringify(parsed.outside));
+  core.setOutput("action", JSON.stringify(parsed.action));
+  core.setOutput("output", JSON.stringify(parsed.output));
+  core.setOutput("warning", JSON.stringify(parsed.warning));
+  core.setOutput("summary", JSON.stringify(parsed.summary));
+  core.setOutput("should-apply", parsed.shouldApply);
+  core.setOutput("should-refresh", parsed.shouldRefresh);
 };
 
-module.exports = main;
+module.exports = {
+  main,
+  getPlanStepLogs,
+};
 
 
 /***/ }),
@@ -13562,14 +13571,20 @@ const getSummarySection = (inputLines) => {
   }
 };
 
-const parse = (rawLines) => {
+const parse = (rawLines, summaryOnly = false) => {
   const lines = rawLines.map(stripAnsi);
+  
+  const summary = getSummarySection(lines);
+  if (summaryOnly) {
+    return {
+      summary
+    } 
+  }
 
   const outside = getOutsideChangeSection(lines);
   const action = getResourceActionSection(lines);
   const output = getOutputChangeSection(lines);
   const warning = getWarningSection(lines);
-  const summary = getSummarySection(lines);
 
   let shouldApply = false;
   let shouldRefresh = false;

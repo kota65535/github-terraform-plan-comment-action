@@ -113,14 +113,20 @@ const getSummarySection = (inputLines) => {
   }
 };
 
-const parse = (rawLines) => {
+const parse = (rawLines, summaryOnly = false) => {
   const lines = rawLines.map(stripAnsi);
+  
+  const summary = getSummarySection(lines);
+  if (summaryOnly) {
+    return {
+      summary
+    } 
+  }
 
   const outside = getOutsideChangeSection(lines);
   const action = getResourceActionSection(lines);
   const output = getOutputChangeSection(lines);
   const warning = getWarningSection(lines);
-  const summary = getSummarySection(lines);
 
   let shouldApply = false;
   let shouldRefresh = false;
