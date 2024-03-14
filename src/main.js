@@ -6,12 +6,16 @@ const { createComment } = require("./github_comment");
 const { logJson } = require("./util");
 const { getInputs } = require("./input");
 
-const getPlanStepLogs = async (jobName, context) => {
+const getPlanStepLogs = async (jobName, index, context) => {
   const stepLogs = await getStepLogs(jobName, context);
+  let curIndex = 0;
   for (const lines of stepLogs) {
     const parsed = parse(lines, true);
     if (parsed.summary.offset >= 0) {
-      return lines;
+      if (curIndex === index) {
+        return lines;
+      }
+      curIndex++;
     }
   }
   throw new Error(
@@ -23,10 +27,10 @@ const main = async () => {
   const inputs = getInputs();
   logJson("inputs", inputs);
 
-  const lines = await getPlanStepLogs(inputs.jobName, context);
+  const lines = await getPlanStepLogs(inputs.jobName, inputs.index, context);
   logJson(`${lines.length} lines of logs found`, lines);
-  
-  const parsed = parse(lines)
+
+  const parsed = parse(lines);
   logJson("Parsed logs", parsed);
 
   const planUrl = await getStepUrl(inputs.jobName, inputs.stepName, context, parsed.summary.offset);

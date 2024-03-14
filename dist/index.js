@@ -13319,6 +13319,7 @@ const { initOctokit } = __nccwpck_require__(8396);
 const getInputs = () => {
   const jobName = core.getInput("plan-job", { required: true });
   const stepName = core.getInput("plan-step", { required: true });
+  const index = Number(core.getInput("plan-index"));
   const workspace = core.getInput("workspace");
   let githubToken = core.getInput("github-token");
   const defaultGithubToken = core.getInput("default-github-token");
@@ -13333,6 +13334,7 @@ const getInputs = () => {
   return {
     jobName,
     stepName,
+    index,
     workspace,
     githubToken,
   };
@@ -13356,12 +13358,16 @@ const { createComment } = __nccwpck_require__(7876);
 const { logJson } = __nccwpck_require__(6254);
 const { getInputs } = __nccwpck_require__(6);
 
-const getPlanStepLogs = async (jobName, context) => {
+const getPlanStepLogs = async (jobName, index, context) => {
   const stepLogs = await getStepLogs(jobName, context);
+  let curIndex = 0;
   for (const lines of stepLogs) {
     const parsed = parse(lines, true);
     if (parsed.summary.offset >= 0) {
-      return lines;
+      if (curIndex === index) {
+        return lines;
+      }
+      curIndex++;
     }
   }
   throw new Error(
@@ -13373,10 +13379,10 @@ const main = async () => {
   const inputs = getInputs();
   logJson("inputs", inputs);
 
-  const lines = await getPlanStepLogs(inputs.jobName, context);
+  const lines = await getPlanStepLogs(inputs.jobName, inputs.index, context);
   logJson(`${lines.length} lines of logs found`, lines);
-  
-  const parsed = parse(lines)
+
+  const parsed = parse(lines);
   logJson("Parsed logs", parsed);
 
   const planUrl = await getStepUrl(inputs.jobName, inputs.stepName, context, parsed.summary.offset);

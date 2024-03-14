@@ -61,8 +61,8 @@ describe("github", function () {
   });
 
   // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8276189769/job/22644332135?pr=35#step:8:1
-  it("gets a step logs", async function () {
-    const lines = await getPlanStepLogs("plan", {
+  it("gets a step logs (1st)", async function () {
+    const lines = await getPlanStepLogs("plan", 0, {
       repo: {
         owner: "kota65535",
         repo: "github-terraform-plan-comment-action",
@@ -71,14 +71,31 @@ describe("github", function () {
       runId: "8276189769",
     });
     const parsed = parse(lines);
-    assert.notEqual(parsed.summary.warning, -1);
+    assert.notEqual(parsed.warning.offset, -1);
+    assert.notEqual(parsed.summary.offset, -1);
+  });
+
+  // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8276189769/job/22644332135?pr=35#step:10:1
+  it("gets a step logs (2nd)", async function () {
+    const lines = await getPlanStepLogs("plan", 1, {
+      repo: {
+        owner: "kota65535",
+        repo: "github-terraform-plan-comment-action",
+      },
+      workflow: "Test",
+      runId: "8276189769",
+    });
+    const parsed = parse(lines);
+    assert.notEqual(parsed.action.offset, -1);
+    assert.notEqual(parsed.output.offset, -1);
+    assert.notEqual(parsed.warning.offset, -1);
     assert.notEqual(parsed.summary.offset, -1);
   });
 
   // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8277529775/job/22648177184?pr=35#step:8:1
-  it("gets a step logs when debug enabled", async function () {
+  it("gets a step logs when debug enabled (1st)", async function () {
     process.env.RUNNER_DEBUG = "1";
-    const lines = await getPlanStepLogs("plan", {
+    const lines = await getPlanStepLogs("plan", 0, {
       repo: {
         owner: "kota65535",
         repo: "github-terraform-plan-comment-action",
@@ -87,7 +104,25 @@ describe("github", function () {
       runId: "8277529775",
     });
     const parsed = parse(lines);
-    assert.notEqual(parsed.summary.warning, -1);
+    assert.notEqual(parsed.warning.offset, -1);
+    assert.notEqual(parsed.summary.offset, -1);
+  });
+
+  // https://github.com/kota65535/github-terraform-plan-comment-action/actions/runs/8277529775/job/22648177184?pr=35#step:10:1
+  it("gets a step logs when debug enabled (2nd)", async function () {
+    process.env.RUNNER_DEBUG = "1";
+    const lines = await getPlanStepLogs("plan", 1, {
+      repo: {
+        owner: "kota65535",
+        repo: "github-terraform-plan-comment-action",
+      },
+      workflow: "Test",
+      runId: "8277529775",
+    });
+    const parsed = parse(lines);
+    assert.notEqual(parsed.action.offset, -1);
+    assert.notEqual(parsed.output.offset, -1);
+    assert.notEqual(parsed.warning.offset, -1);
     assert.notEqual(parsed.summary.offset, -1);
   });
 });
