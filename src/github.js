@@ -98,8 +98,8 @@ const getContent = async (path, context, pattern) => {
             repo: context.repo.repo,
             path: d.path,
             ref: context.ref,
-          })
-        )
+          }),
+        ),
     );
     ret = files.map((f) => f.data);
     ret.forEach((r) => {
@@ -121,7 +121,7 @@ const getNumActionsOfStepsRecursive = async (step, context) => {
       actionFile = await getContent(npath.normalize(step.uses), context, /action.ya?ml/);
     } else {
       // Remote action
-      const [match, owner, repo, ref] = step.uses.match(/(.*)\/(.*)@(.*)/);
+      const [_, owner, repo, ref] = step.uses.match(/(.*)\/(.*)@(.*)/);
       actionFile = await getContent(".", { repo: { owner, repo }, ref }, /action.ya?ml/);
     }
     if (actionFile.length !== 1) {
