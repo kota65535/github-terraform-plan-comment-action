@@ -31,22 +31,22 @@ Use this action after the job where you run `terraform plan`.
 
 ```yaml
 
-plan:
-  runs-on: ubuntu-latest
-  steps:
-    # ... other steps
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      # ... other steps
 
-    - name: Run terraform plan
-      run: terraform plan
+      - name: Run terraform plan
+        run: terraform plan
 
-after-plan:
-  runs-on: ubuntu-latest
-  needs:
-    - plan
-  steps:
-    - name: Notify terraform plan result as PR comment
-      uses: kota65535/github-terraform-plan-comment-action@v1
-      with:
-        plan-job: plan
-        plan-step: Run terraform plan
+  after-plan:
+    runs-on: ubuntu-latest
+    needs:
+      - plan
+    steps:
+      - name: Notify terraform plan result as PR comment
+        uses: kota65535/github-terraform-plan-comment-action@v1
+        with:
+          plan-job: plan
+          plan-step: Run terraform plan
 ```
