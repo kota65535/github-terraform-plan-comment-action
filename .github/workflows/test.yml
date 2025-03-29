@@ -71,7 +71,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Notify terraform plan result as PR comment for dev
-        uses: ./
+        uses: kota65535/github-terraform-plan-comment-action@v1
         id: plan-dev
         with:
           plan-job: plan
@@ -97,7 +97,7 @@ jobs:
           [[ $RET -eq 0 ]]
           
       - name: Notify terraform plan result as PR comment for prod
-        uses: ./
+        uses: kota65535/github-terraform-plan-comment-action@v1
         id: plan-prod
         with:
           plan-job: plan
