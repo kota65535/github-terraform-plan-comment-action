@@ -32734,20 +32734,23 @@ ${props.icon} **${plan.summary.str}**
 
 `;
 
-  if (plan.summary.add > 0) {
-    const added = plan.action.sections.create.concat(plan.action.sections.replace);
-    const names = added.map((a) => `* \`${a.name}\``).join("\n");
-    ret += `### Add\n${names}\n`;
+  if (plan.action.sections.create.length > 0) {
+    const names = plan.action.sections.create.map((a) => `* \`${a.name}\``).join("\n");
+    ret += `### Create\n${names}\n`;
   }
 
-  if (plan.summary.change > 0) {
+  if (plan.action.sections.update.length > 0) {
     const names = plan.action.sections.update.map((a) => `* \`${a.name}\``).join("\n");
-    ret += `### Change\n${names}\n`;
+    ret += `### Update\n${names}\n`;
   }
 
-  if (plan.summary.destroy > 0) {
-    const destroyed = plan.action.sections.destroy.concat(plan.action.sections.replace);
-    const names = destroyed.map((a) => `* \`${a.name}\``).join("\n");
+  if (plan.action.sections.replace.length > 0) {
+    const names = plan.action.sections.replace.map((a) => `* \`${a.name}\``).join("\n");
+    ret += `### Replace\n${names}\n`;
+  }
+
+  if (plan.action.sections.destroy.length > 0) {
+    const names = plan.action.sections.destroy.map((a) => `* \`${a.name}\``).join("\n");
     ret += `### Destroy\n${names}\n`;
   }
 
@@ -32967,7 +32970,10 @@ const getSummarySection = (inputLines) => {
     }
   }
   {
-    const { offset, match } = findLine(inputLines, /^((No changes. Your infrastructure matches the configuration.)|(You can apply this plan to save these new output values))/);
+    const { offset, match } = findLine(
+      inputLines,
+      /^((No changes. Your infrastructure matches the configuration.)|(You can apply this plan to save these new output values))/,
+    );
     return {
       offset,
       add: 0,
@@ -32980,12 +32986,12 @@ const getSummarySection = (inputLines) => {
 
 const parse = (rawLines, summaryOnly = false) => {
   const lines = rawLines.map(stripAnsi);
-  
+
   const summary = getSummarySection(lines);
   if (summaryOnly) {
     return {
-      summary
-    } 
+      summary,
+    };
   }
 
   const outside = getOutsideChangeSection(lines);

@@ -102,7 +102,10 @@ const getSummarySection = (inputLines) => {
     }
   }
   {
-    const { offset, match } = findLine(inputLines, /^((No changes. Your infrastructure matches the configuration.)|(You can apply this plan to save these new output values))/);
+    const { offset, match } = findLine(
+      inputLines,
+      /^((No changes. Your infrastructure matches the configuration.)|(You can apply this plan to save these new output values))/,
+    );
     return {
       offset,
       add: 0,
@@ -115,12 +118,12 @@ const getSummarySection = (inputLines) => {
 
 const parse = (rawLines, summaryOnly = false) => {
   const lines = rawLines.map(stripAnsi);
-  
+
   const summary = getSummarySection(lines);
   if (summaryOnly) {
     return {
-      summary
-    } 
+      summary,
+    };
   }
 
   const outside = getOutsideChangeSection(lines);
